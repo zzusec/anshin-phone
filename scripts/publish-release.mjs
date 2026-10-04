@@ -1,0 +1,17 @@
+import {execFileSync} from 'node:child_process';
+import {readFileSync,copyFileSync,writeFileSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {resolve} from 'node:path';
+const root=resolve(import.meta.dirname,'..');
+const version=JSON.parse(readFileSync(resolve(root,'package.json'),'utf8')).version;
+const source=resolve(root,'android/app/build/outputs/apk/debug/app-debug.apk');
+if(!existsSync(source))throw new Error('先完成Android构建和测试，再发布；不自动制造未验证APK。');
+const repo=execFileSync('git',['remote','get-url','origin'],{cwd:root,encoding:'utf8'}).trim();
+if(!/github\.com[/:]zzusec\/anshin-phone(?:\.git)?$/.test(repo))throw new Error('发布仓库不符合本项目更新通道，请人工核对。');
+const sdk=process.env.ANDROID_HOME||'/opt/homebrew/share/android-commandlinetools';
+const info=execFileSync(resolve(sdk,'build-tools/35.0.0/aapt'),['dump','badging',source],{encoding:'utf8'});
+if(!info.includes("name='com.anshin.phone'")||!info.includes("versionName='"+version+"'"))throw new Error('APK身份或版本与package.json不一致。');
+execFileSync(resolve(sdk,'build-tools/35.0.0/apksigner'),['verify',source],{stdio:'inherit'});
+const name='anshin-phone-v'+version+'.apk',apk=resolve(root,'artifacts',name);
+copyFileSync(source,apk);writeFileSync(apk+'.sha256',createHash('sha256').update(readFileSync(apk)).digest('hex')+'  '+name+'\n');
+execFileSync('gh',['release','create','v'+version,apk,apk+'.sha256','--repo','zzusec/anshin-phone','--title','v'+version+' · 公开测试版','--notes-file',resolve(root,'CHANGELOG.md'),'--verify-tag'],{cwd:root,stdio:'inherit'});

@@ -1,0 +1,16 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.anshin.phone'
+    compileSdk 35
+    buildFeatures { aidl true; buildConfig true }
+    defaultConfig { applicationId 'com.anshin.phone'; minSdk 28; targetSdk 35; versionCode 4; versionName '0.4.0'; buildConfigField 'String', 'DEFAULT_SERVER_URL', '"http://127.0.0.1:8787"' }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    testOptions { unitTests.returnDefaultValues = true }
+}
+dependencies {
+    implementation 'androidx.core:core:1.13.0'
+    implementation 'dev.rikka.shizuku:api:13.1.5'
+    implementation 'dev.rikka.shizuku:provider:13.1.5'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.json:json:20240303'
+}

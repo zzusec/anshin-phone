@@ -1,0 +1,37 @@
+.DS_Store
+node_modules/
+web/dist/
+android/.gradle/
+android/**/build/
+android/local.properties
+artifacts/
+.env
+# 既有清理证据中含设备标识与APK，不作为产品源码发布。
+GLK-*/
+MiTV*/
+restore-system-probe-*/
+latest*
+
+.handoff/
+
+# Local collaboration/real-device evidence stays private, not product source.
+AGENTS.md
+CLAUDE.md
+docs/HANDOFF.md
+docs/CLAUDE*.md
+docs/DEVICE_*.md
+docs/EXECUTION*.md
+docs/PARALLEL_WORK.md
+docs/VERIFICATION.md
+docs/ANDROID_BEHAVIOR_VERIFICATION.md
+docs/reference/
+*.keystore
+*.jks
+*.pem
+*.p12
+*.mobileprovision
+.env.*
+# Runtime logs / device captures must never enter the public repository.
+*.log
+*.network-response
+*.network-request

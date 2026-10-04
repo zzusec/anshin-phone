@@ -1,0 +1,26 @@
+{
+  "name": "anshin-phone",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build-web.mjs",
+    "start": "node server/src/index.mjs",
+    "test": "node --test web/test/*.test.mjs server/test/*.test.mjs",
+    "android:build": "sh scripts/build-android.sh",
+    "android:test": "sh scripts/build-android.sh test",
+    "phone:setup": "node scripts/adb-setup.mjs"
+  },
+  "dependencies": {
+    "preline": "5.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.0",
+    "esbuild": "0.28.2",
+    "playwright": "1.56.1",
+    "tailwindcss": "4.3.0"
+  }
+}

@@ -1,0 +1,15 @@
+import { cp, mkdir, rm, writeFile, readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {build} from 'esbuild';
+const root=resolve(import.meta.dirname,'..'), dist=resolve(root,'web/dist');
+await rm(dist,{recursive:true,force:true});await mkdir(dist,{recursive:true});
+execFileSync(process.execPath,[resolve(root,'node_modules/@tailwindcss/cli/dist/index.mjs'),'-i',resolve(root,'web/src/app.css'),'-o',resolve(dist,'app.css'),'--minify'],{cwd:root,stdio:'inherit'});
+await build({entryPoints:[resolve(root,'web/src/app.js')],bundle:true,format:'iife',target:['chrome66'],outfile:resolve(dist,'app.js'),minify:true,legalComments:'eof'});
+const source=await readFile(resolve(root,'web/src/index.html'),'utf8');
+const html=source.replace('type="module" src="/app.js"','defer src="/app.js"');
+await writeFile(resolve(dist,'index.html'),html);await cp(resolve(root,'web/src/icon.svg'),resolve(dist,'icon.svg'));
+await mkdir(resolve(dist,'assist'),{recursive:true});await writeFile(resolve(dist,'assist/index.html'),html.replace('data-surface="phone"','data-surface="assist"'));
+await cp(resolve(root,'node_modules/preline/LICENSE'),resolve(dist,'PRELINE-LICENSE.txt'));
+const native=resolve(root,'android/app/src/main/assets');await rm(native,{recursive:true,force:true});await cp(dist,native,{recursive:true});
+console.log('Preline + Tailwind 本地界面编译完成，JS兼容Chrome66；网页与APK资源一致，无外部CDN/字体。');
